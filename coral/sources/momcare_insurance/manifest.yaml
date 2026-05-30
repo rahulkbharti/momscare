@@ -1,0 +1,40 @@
+name: momcare_insurance
+version: 0.1.0
+dsl_version: 3
+backend: file
+description: Insurance policy details extracted from medical documents using Gemini Vision AI
+test_queries:
+  - SELECT record_id, provider_name, policy_number, status FROM momcare_insurance.insurance LIMIT 5
+  - SELECT provider_name, COUNT(*) AS count FROM momcare_insurance.insurance GROUP BY provider_name
+tables:
+  - name: insurance
+    format: jsonl
+    description: Insurance records extracted from medical documents
+    source:
+      location: "file:///D:/hackathons/mom5/mom-care/data/"
+      glob: "insurance.jsonl"
+    columns:
+      - name: record_id
+        type: Utf8
+        description: MongoDB record ID (links to patients)
+      - name: provider_name
+        type: Utf8
+        description: Insurance provider name
+      - name: policy_number
+        type: Utf8
+        description: Policy number
+      - name: policy_holder_name
+        type: Utf8
+        description: Name of the policy holder
+      - name: coverage_amount
+        type: Float64
+        description: Coverage amount in rupees
+      - name: expiry_date
+        type: Utf8
+        description: Policy expiry date
+      - name: status
+        type: Utf8
+        description: Policy status e.g. active, expired
+      - name: extracted_at
+        type: Utf8
+        description: Timestamp when document was processed

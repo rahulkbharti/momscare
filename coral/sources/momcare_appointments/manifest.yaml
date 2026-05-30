@@ -1,0 +1,34 @@
+name: momcare_appointments
+version: 0.1.0
+dsl_version: 3
+backend: file
+description: Appointment details extracted from prescription documents using Gemini Vision AI
+test_queries:
+  - SELECT record_id, appointment_date, reason, status FROM momcare_appointments.appointments LIMIT 5
+  - SELECT status, COUNT(*) AS count FROM momcare_appointments.appointments GROUP BY status
+tables:
+  - name: appointments
+    format: jsonl
+    description: Appointment records extracted from prescription documents
+    source:
+      location: "file:///D:/hackathons/mom5/mom-care/data/"
+      glob: "appointments.jsonl"
+    columns:
+      - name: record_id
+        type: Utf8
+        description: MongoDB record ID (links to patients)
+      - name: appointment_date
+        type: Utf8
+        description: Date of appointment in YYYY-MM-DD format
+      - name: appointment_time
+        type: Utf8
+        description: Time of appointment in HH:mm format
+      - name: status
+        type: Utf8
+        description: Appointment status e.g. scheduled, completed
+      - name: reason
+        type: Utf8
+        description: Reason for the appointment
+      - name: extracted_at
+        type: Utf8
+        description: Timestamp when document was processed

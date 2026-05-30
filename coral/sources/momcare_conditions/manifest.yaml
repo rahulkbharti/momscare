@@ -1,0 +1,25 @@
+name: momcare_conditions
+version: 0.1.0
+dsl_version: 3
+backend: file
+description: Medical conditions diagnosed or mentioned in prescription documents, extracted by Gemini AI
+test_queries:
+  - SELECT record_id, condition FROM momcare_conditions.conditions LIMIT 5
+  - SELECT condition, COUNT(*) AS patient_count FROM momcare_conditions.conditions GROUP BY condition ORDER BY patient_count DESC
+tables:
+  - name: conditions
+    format: jsonl
+    description: Medical conditions extracted from prescription documents
+    source:
+      location: "file:///D:/hackathons/mom5/mom-care/data/"
+      glob: "conditions.jsonl"
+    columns:
+      - name: record_id
+        type: Utf8
+        description: MongoDB record ID (links to patients)
+      - name: condition
+        type: Utf8
+        description: Medical condition name e.g. Diabetes, Hypertension
+      - name: extracted_at
+        type: Utf8
+        description: Timestamp when document was processed

@@ -4,6 +4,7 @@ import multer from "multer";
 import { prepareFile } from "../utils/document.utils";
 import { extractFromDocuments, prepareDocuments } from "../utils/extract.utils";
 import { MedicalRecord } from "../models/patient.model";
+import { writeToCoralJsonl } from "../utils/coral.writer";
 
 export const documentRoutes = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -114,6 +115,14 @@ documentRoutes.post("/extract", upload.array("files"), async (req, res) => {
 
     // Save medical record to MongoDB
     const record = await MedicalRecord.create(extractedData);
+
+    // Also write to JSONL files so Coral can query this real data
+    try {
+      writeToCoralJsonl(record._id.toString(), extractedData);
+    } catch (coralErr) {
+      // Non-fatal: log but don't fail the request
+      console.error("[Coral] Failed to write JSONL:", coralErr);
+    }
 
     res.status(201).json(record);
   } catch (error) {

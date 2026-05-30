@@ -1,0 +1,37 @@
+name: momcare_patients
+version: 0.1.0
+dsl_version: 3
+backend: file
+description: Patient demographics extracted from real prescription documents using Gemini Vision AI
+test_queries:
+  - SELECT record_id, name, age, gender FROM momcare_patients.patients LIMIT 3
+  - SELECT COUNT(*) AS patient_count FROM momcare_patients.patients
+tables:
+  - name: patients
+    format: jsonl
+    description: Patient info extracted from prescription documents
+    source:
+      location: "file:///D:/hackathons/mom5/mom-care/data/"
+      glob: "patients.jsonl"
+    columns:
+      - name: record_id
+        type: Utf8
+        description: MongoDB record ID
+      - name: name
+        type: Utf8
+        description: Patient full name
+      - name: age
+        type: Int64
+        description: Patient age in years
+      - name: gender
+        type: Utf8
+        description: Patient gender
+      - name: phone
+        type: Utf8
+        description: Patient phone number
+      - name: doctor_name
+        type: Utf8
+        description: Treating doctor name
+      - name: extracted_at
+        type: Utf8
+        description: Timestamp when document was processed

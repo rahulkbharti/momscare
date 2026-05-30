@@ -1,5 +1,39 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
+
+# Environment files (contain secrets)
 .env
-.DS_Store
+.env.local
 .env.development
+.env.production
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Coral — JSONL data files (real patient data, never commit)
+data/
+
+# Coral temp/test files
+coral-windows.zip
+coral-bin/
+test_manifest.yaml
+
+# Logs
+*.log
+logs/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Editor folders
+.vscode/
+.idea/
+
+# Temp files
+*.tmp
+*.temp
