@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mom Care Chat</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        color: #172033;
+        background: #f6f7fb;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+      }
+
+      button,
+      input,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        border: 0;
+        border-radius: 8px;
+        background: #2563eb;
+        color: white;
+        cursor: pointer;
+        font-weight: 650;
+        padding: 10px 14px;
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        border: 1px solid #d4d9e6;
+        border-radius: 8px;
+        background: white;
+        color: #172033;
+        padding: 10px 12px;
+      }
+
+      textarea {
+        min-height: 168px;
+        resize: vertical;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+        gap: 18px;
+        min-height: 100vh;
+        padding: 18px;
+      }
+
+      .panel,
+      .chat {
+        border: 1px solid #e1e5ef;
+        border-radius: 8px;
+        background: white;
+      }
+
+      .panel {
+        align-self: start;
+        padding: 18px;
+      }
+
+      .brand {
+        margin: 0 0 4px;
+        font-size: 22px;
+      }
+
+      .muted {
+        margin: 0;
+        color: #65728a;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .form {
+        display: grid;
+        gap: 14px;
+        margin-top: 18px;
+      }
+
+      .field {
+        display: grid;
+        gap: 7px;
+      }
+
+      .label {
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .secondary {
+        background: #e9eefb;
+        color: #1f3f85;
+      }
+
+      .status {
+        border-radius: 8px;
+        background: #f0f4ff;
+        color: #31508f;
+        font-size: 13px;
+        line-height: 1.45;
+        padding: 10px 12px;
+      }
+
+      .status.error {
+        background: #fff0f0;
+        color: #9f1d1d;
+      }
+
+      .json-output {
+        max-height: 260px;
+        overflow: auto;
+        border: 1px solid #e1e5ef;
+        border-radius: 8px;
+        background: #101827;
+        color: #dce8ff;
+        font-size: 12px;
+        line-height: 1.5;
+        padding: 12px;
+        white-space: pre-wrap;
+      }
+
+      .chat {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        min-height: calc(100vh - 36px);
+        overflow: hidden;
+      }
+
+      .chat-header {
+        border-bottom: 1px solid #e1e5ef;
+        padding: 16px 18px;
+      }
+
+      .chat-header h2 {
+        margin: 0 0 3px;
+        font-size: 18px;
+      }
+
+      .messages {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        overflow: auto;
+        padding: 18px;
+      }
+
+      .message {
+        max-width: min(720px, 88%);
+        border-radius: 8px;
+        line-height: 1.45;
+        padding: 10px 12px;
+        white-space: pre-wrap;
+      }
+
+      .message.user {
+        align-self: flex-end;
+        background: #2563eb;
+        color: white;
+      }
+
+      .message.bot {
+        align-self: flex-start;
+        background: #eef2f8;
+        color: #172033;
+      }
+
+      .composer {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        border-top: 1px solid #e1e5ef;
+        padding: 14px;
+      }
+
+      @media (max-width: 860px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        .chat {
+          min-height: 620px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <section class="panel">
+        <h1 class="brand">Mom Care Chat</h1>
+        <p class="muted">
+          Upload prescription files, extract JSON, then chat with the medical
+          bot over Socket.IO.
+        </p>
+
+        <form class="form" id="extractForm">
+          <div class="field">
+            <label class="label" for="token">Document API token</label>
+            <input
+              id="token"
+              name="token"
+              type="password"
+              autocomplete="off"
+              placeholder="DOCUMENT_API_TOKEN"
+            />
+          </div>
+
+          <div class="field">
+            <label class="label" for="files">Prescription files</label>
+            <input id="files" name="files" type="file" multiple />
+          </div>
+
+          <div class="actions">
+            <button id="extractButton" type="submit">Extract and start</button>
+            <button id="sampleButton" class="secondary" type="button">
+              Use sample data
+            </button>
+          </div>
+
+          <div id="status" class="status">Socket connecting...</div>
+
+          <div class="field">
+            <label class="label" for="jsonOutput">Extracted JSON</label>
+            <pre id="jsonOutput" class="json-output">{}</pre>
+          </div>
+        </form>
+      </section>
+
+      <section class="chat">
+        <div class="chat-header">
+          <h2>Chat</h2>
+          <p class="muted" id="chatState">
+            Upload documents or use sample data to start chatting.
+          </p>
+        </div>
+
+        <div class="messages" id="messages"></div>
+
+        <form class="composer" id="chatForm">
+          <input
+            id="messageInput"
+            type="text"
+            placeholder="Ask about medicines, conditions, appointments..."
+            disabled
+          />
+          <button id="sendButton" type="submit" disabled>Send</button>
+        </form>
+      </section>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+
+      const extractForm = document.getElementById("extractForm");
+      const tokenInput = document.getElementById("token");
+      const filesInput = document.getElementById("files");
+      const extractButton = document.getElementById("extractButton");
+      const sampleButton = document.getElementById("sampleButton");
+      const statusBox = document.getElementById("status");
+      const jsonOutput = document.getElementById("jsonOutput");
+      const chatState = document.getElementById("chatState");
+      const messages = document.getElementById("messages");
+      const chatForm = document.getElementById("chatForm");
+      const messageInput = document.getElementById("messageInput");
+      const sendButton = document.getElementById("sendButton");
+
+      const sampleData = {
+        patient: {
+          patient_id: "PAT001",
+          name: "Rasia Sultana",
+          age: 35,
+          gender: "Female",
+          phone: "+91XXXXXXXXXX",
+        },
+        doctor: {
+          doctor_id: "DOC001",
+          name: "Akhtari Hossain Chowdhury",
+        },
+        conditions: ["Thalassaemia", "Anaemia", "Menorrhagia"],
+        prescriptions: [
+          {
+            medicine_name: "Pantoprazole",
+            dosage: "40mg",
+            frequency: 1,
+            timings: ["08:00"],
+            instructions: "Before breakfast",
+          },
+        ],
+        appointments: [],
+        insurance: [],
+      };
+
+      let botReady = false;
+
+      function setStatus(message, isError = false) {
+        statusBox.textContent = message;
+        statusBox.classList.toggle("error", isError);
+      }
+
+      function setChatEnabled(enabled) {
+        botReady = enabled;
+        messageInput.disabled = !enabled;
+        sendButton.disabled = !enabled;
+        chatState.textContent = enabled
+          ? "Bot ready. Ask anything about the extracted medical data."
+          : "Upload documents or use sample data to start chatting.";
+      }
+
+      function appendMessage(role, text) {
+        const message = document.createElement("div");
+        message.className = `message ${role}`;
+        message.textContent = text || "";
+        messages.appendChild(message);
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      function startBot(extractedData) {
+        jsonOutput.textContent = JSON.stringify(extractedData, null, 2);
+        socket.emit("init", extractedData);
+      }
+
+      socket.on("connect", () => {
+        setStatus(`Socket connected: ${socket.id}`);
+      });
+
+      socket.on("ready", (message) => {
+        setChatEnabled(true);
+        setStatus(message || "Bot ready.");
+        appendMessage("bot", "Bot ready hai. Ab medical data ke baare me pucho.");
+      });
+
+      socket.on("message", (message) => {
+        setChatEnabled(true);
+        appendMessage("bot", message);
+      });
+
+      socket.on("disconnect", () => {
+        setChatEnabled(false);
+        setStatus("Socket disconnected.", true);
+      });
+
+      socket.on("connect_error", (error) => {
+        setStatus(error.message || "Socket connection failed.", true);
+      });
+
+      extractForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const files = Array.from(filesInput.files || []);
+        const token = tokenInput.value.trim();
+
+        if (!token) {
+          setStatus("Document API token required.", true);
+          return;
+        }
+
+        if (!files.length) {
+          setStatus("Select at least one prescription file.", true);
+          return;
+        }
+
+        const formData = new FormData();
+        for (const file of files) {
+          formData.append("files", file);
+        }
+
+        extractButton.disabled = true;
+        setChatEnabled(false);
+        setStatus("Extracting medical data...");
+
+        try {
+          const response = await fetch("/api/documents/extract", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          });
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Extraction failed.");
+          }
+
+          setStatus("Extraction complete. Starting bot...");
+          startBot(data);
+        } catch (error) {
+          setStatus(error.message || "Extraction failed.", true);
+        } finally {
+          extractButton.disabled = false;
+        }
+      });
+
+      sampleButton.addEventListener("click", () => {
+        setChatEnabled(false);
+        setStatus("Starting bot with sample data...");
+        startBot(sampleData);
+      });
+
+      chatForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const message = messageInput.value.trim();
+        if (!message || !botReady) {
+          return;
+        }
+
+        appendMessage("user", message);
+        socket.emit("message", message);
+        messageInput.value = "";
+      });
+    </script>
+  </body>
+</html>

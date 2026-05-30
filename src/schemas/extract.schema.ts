@@ -3,15 +3,32 @@
 export const extractSchema = {
   type: "object",
   properties: {
-    general: {
+    patient: {
       type: "object",
       properties: {
-        patient_name: { type: "string", nullable: true },
-        relation: { type: "string", nullable: true }, // self, wife, father, etc.
-        patient_age: { type: "number", nullable: true },
-        doctor_name: { type: "string", nullable: true },
+        patient_id: { type: "string", nullable: true },
+        name: { type: "string", nullable: true },
+        age: { type: "number", nullable: true },
+        gender: { type: "string", nullable: true },
+        phone: { type: "string", nullable: true },
       },
-      required: ["patient_name", "relation", "patient_age", "doctor_name"],
+      required: ["patient_id", "name", "age", "gender"],
+    },
+
+    doctor: {
+      type: "object",
+      properties: {
+        doctor_id: { type: "string", nullable: true },
+        name: { type: "string", nullable: true },
+      },
+      required: ["doctor_id", "name"],
+    },
+
+    conditions: {
+      type: "array",
+      items: {
+        type: "string",
+      },
     },
 
     prescriptions: {
@@ -20,24 +37,46 @@ export const extractSchema = {
         type: "object",
         properties: {
           medicine_name: { type: "string", nullable: true },
-          times_per_day: { type: "number", nullable: true },
-          days: {
+          dosage: { type: "string", nullable: true },
+          frequency: { type: "number", nullable: true },
+          timings: {
             type: "array",
             items: {
               type: "string",
-              enum: [
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
-                "Sunday",
-              ],
             },
           },
+          instructions: { type: "string", nullable: true },
         },
-        required: ["medicine_name", "times_per_day", "days"],
+        required: [
+          "medicine_name",
+          "dosage",
+          "frequency",
+          "timings",
+          "instructions",
+        ],
+      },
+    },
+
+    appointments: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          appointment_id: { type: "string", nullable: true },
+          doctor_id: { type: "string", nullable: true },
+          appointment_date: { type: "string", nullable: true },
+          appointment_time: { type: "string", nullable: true },
+          status: { type: "string", nullable: true },
+          reason: { type: "string", nullable: true },
+        },
+        required: [
+          "appointment_id",
+          "doctor_id",
+          "appointment_date",
+          "appointment_time",
+          "status",
+          "reason",
+        ],
       },
     },
 
@@ -46,33 +85,32 @@ export const extractSchema = {
       items: {
         type: "object",
         properties: {
-          company_name: { type: "string", nullable: true },
-          patient_name: { type: "string", nullable: true },
           insurance_id: { type: "string", nullable: true },
-          monthly_amount: { type: "number", nullable: true },
-          payment_date: { type: "number", nullable: true }, // 1-31
+          provider_name: { type: "string", nullable: true },
+          policy_number: { type: "string", nullable: true },
+          policy_holder_name: { type: "string", nullable: true },
+          coverage_amount: { type: "number", nullable: true },
+          expiry_date: { type: "string", nullable: true },
+          status: { type: "string", nullable: true },
         },
         required: [
-          "company_name",
-          "patient_name",
           "insurance_id",
-          "monthly_amount",
-          "payment_date",
+          "provider_name",
+          "policy_number",
+          "policy_holder_name",
+          "coverage_amount",
+          "expiry_date",
+          "status",
         ],
       },
     },
-
-    symptoms: {
-      type: "array",
-      items: {
-        type: "object",
-        properties: {
-          symptom: { type: "string", nullable: true },
-          recorded_date: { type: "string", nullable: true }, // "YYYY-MM-DD"
-        },
-        required: ["symptom", "recorded_date"],
-      },
-    },
   },
-  required: ["general", "prescriptions", "insurance", "symptoms"],
+  required: [
+    "patient",
+    "doctor",
+    "conditions",
+    "prescriptions",
+    "appointments",
+    "insurance",
+  ],
 };

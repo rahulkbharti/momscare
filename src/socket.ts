@@ -24,8 +24,19 @@ export function initSocket(server: http.Server) {
         socket.emit("message", "Pehle document upload karo.");
         return;
       }
-      const reply = await bot.sendMessage(message);
-      socket.emit("message", reply);
+
+      try {
+        const reply = await bot.sendMessage(message);
+        socket.emit("message", reply);
+      } catch (error) {
+        console.error("Chat error:", error);
+        socket.emit(
+          "message",
+          error instanceof Error
+            ? `Chat failed: ${error.message}`
+            : "Chat failed. Please try again.",
+        );
+      }
     });
 
     socket.on("disconnect", () => {

@@ -8,10 +8,16 @@ Extract information from the given document, whether handwritten or printed.
 Rules:
 - If a field is not found, set it as null.
 - If a list has no entries, return an empty array.
-- For days, convert short forms: Mon -> Monday, Tue -> Tuesday, etc.
-- OD = 1 time, BD = 2 times, TDS = 3 times, QID = 4 times per day.
+- Do not invent patient_id or doctor_id. Use null if they are not present.
+- phone is optional. Extract it when present, otherwise leave it null or omit it.
+- Extract medical conditions as simple strings in the conditions array.
+- For prescriptions, extract medicine_name, dosage, frequency, timings, and instructions.
+- frequency is the number of doses per day.
+- OD = frequency 1, BD = frequency 2, TDS = frequency 3, QID = frequency 4.
+- timings must use 24-hour HH:mm format.
+- If exact timings are not written, infer common timings: morning/before breakfast -> 08:00, afternoon -> 13:00, evening -> 18:00, night/bedtime -> 21:00.
 - For payment_date, extract only the number, for example "15th" -> 15.
-- recorded_date format should be YYYY-MM-DD.
+- Appointment date format should be YYYY-MM-DD and appointment time format should be HH:mm.
 - Return only valid JSON matching the response schema.`;
 
 export async function prepareDocuments(files: File[]) {

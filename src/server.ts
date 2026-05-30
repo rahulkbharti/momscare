@@ -7,6 +7,8 @@ import { initSocket } from "./socket";
 const app = express();
 const server = http.createServer(app);
 
+app.use(express.static("public"));
+
 app.get("/health", (_req, res) => {
   res.json({ ok: true });
 });

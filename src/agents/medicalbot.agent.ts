@@ -3,7 +3,7 @@ import { medicalTools, handleToolCall } from "../tools/medical.tools";
 
 export function createMedicalBot(extractedData: any) {
   const chat = ai.chats.create({
-    model: "gemini-2.0-flash",
+    model: process.env.GEMINI_MODEL ?? "gemini-2.0-flash",
     config: {
       tools: medicalTools,
       systemInstruction: `
@@ -18,12 +18,19 @@ export function createMedicalBot(extractedData: any) {
     const response = await chat.sendMessage({ message: userMessage });
 
     if (response.functionCalls?.length) {
-      const toolResults = response.functionCalls.map((fc) => ({
-        functionResponse: {
-          name: fc.name,
-          response: handleToolCall(fc.name ?? "", extractedData),
-        },
-      }));
+      const toolResults = response.functionCalls.map((fc) => {
+        const raw = handleToolCall(fc.name ?? "", extractedData);
+        // Gemini requires function_response.response to be a plain object, not an array
+        const result = Array.isArray(raw)
+          ? { result: raw }
+          : raw ?? { result: null };
+        return {
+          functionResponse: {
+            name: fc.name,
+            response: result,
+          },
+        };
+      });
 
       const final = await chat.sendMessage({ message: toolResults });
       return final.text;
