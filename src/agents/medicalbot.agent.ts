@@ -5,7 +5,7 @@ export function createMedicalBot(recordId: string) {
   const chat = ai.chats.create({
     model: process.env.GEMINI_MODEL ?? "gemini-2.0-flash",
     config: {
-      tools: medicalTools,
+      tools: medicalTools as any,
       systemInstruction: `You are a helpful medical assistant for caregivers.
 You have access to a patient's medical record. Always use the tools to fetch real data before answering.
 Rules:
@@ -34,7 +34,11 @@ Rules:
 
       const toolResults = await Promise.all(
         response.functionCalls.map(async (fc) => {
-          const raw = await handleToolCall(fc.name ?? "", recordId);
+          const raw = await handleToolCall(
+            fc.name ?? "",
+            recordId,
+            (fc.args as Record<string, string>) ?? {}
+          );
           const result = Array.isArray(raw)
             ? { result: raw }
             : raw ?? { result: null };
