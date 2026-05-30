@@ -1,5 +1,5 @@
 import { File as NodeFile } from "buffer";
-import { Router } from "express";
+import { RequestHandler, Router } from "express";
 import multer from "multer";
 import { prepareFile } from "../utils/document.utils";
 import { extractFromDocuments, prepareDocuments } from "../utils/extract.utils";
@@ -7,11 +7,32 @@ import { extractFromDocuments, prepareDocuments } from "../utils/extract.utils";
 export const documentRoutes = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
+const requireDocumentToken: RequestHandler = (req, res, next) => {
+  const expectedToken = process.env.DOCUMENT_API_TOKEN;
+
+  if (!expectedToken) {
+    res.status(500).json({ error: "Document API token is not configured." });
+    return;
+  }
+
+  const authorization = req.header("authorization") ?? "";
+  const [scheme, token] = authorization.split(" ");
+
+  if (scheme !== "Bearer" || token !== expectedToken) {
+    res.status(401).json({ error: "Invalid or missing bearer token." });
+    return;
+  }
+
+  next();
+};
+
 function toNodeFile(file: Express.Multer.File) {
   return new NodeFile([new Uint8Array(file.buffer)], file.originalname, {
     type: file.mimetype,
   }) as unknown as File;
 }
+
+documentRoutes.use(requireDocumentToken);
 
 documentRoutes.post("/upload", upload.single("file"), async (req, res) => {
   try {
