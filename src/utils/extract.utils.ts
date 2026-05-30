@@ -8,7 +8,7 @@ Extract information from the given document, whether handwritten or printed.
 Rules:
 - If a field is not found, set it as null.
 - If a list has no entries, return an empty array.
-- Do not invent patient_id or doctor_id. Use null if they are not present.
+- Do not invent names or any other fields. Use null if they are not present.
 - phone is optional. Extract it when present, otherwise leave it null or omit it.
 - Extract medical conditions as simple strings in the conditions array.
 - For prescriptions, extract medicine_name, dosage, frequency, timings, and instructions.
@@ -48,6 +48,24 @@ export async function extractFromDocuments(
       systemInstruction: SYSTEM_PROMPT,
       responseMimeType: "application/json",
       responseSchema: extractSchema as any,
+      safetySettings: [
+        {
+          category: "HARM_CATEGORY_HATE_SPEECH",
+          threshold: "BLOCK_MEDIUM_AND_ABOVE",
+        },
+        {
+          category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+          threshold: "BLOCK_MEDIUM_AND_ABOVE",
+        },
+        {
+          category: "HARM_CATEGORY_HARASSMENT",
+          threshold: "BLOCK_MEDIUM_AND_ABOVE",
+        },
+        {
+          category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          threshold: "BLOCK_MEDIUM_AND_ABOVE",
+        },
+      ] as any,
     },
   });
 

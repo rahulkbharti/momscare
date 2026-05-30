@@ -6,22 +6,20 @@ export const extractSchema = {
     patient: {
       type: "object",
       properties: {
-        patient_id: { type: "string", nullable: true },
         name: { type: "string", nullable: true },
         age: { type: "number", nullable: true },
         gender: { type: "string", nullable: true },
         phone: { type: "string", nullable: true },
       },
-      required: ["patient_id", "name", "age", "gender"],
+      required: ["name", "age", "gender"],
     },
 
     doctor: {
       type: "object",
       properties: {
-        doctor_id: { type: "string", nullable: true },
         name: { type: "string", nullable: true },
       },
-      required: ["doctor_id", "name"],
+      required: ["name"],
     },
 
     conditions: {
@@ -62,16 +60,12 @@ export const extractSchema = {
       items: {
         type: "object",
         properties: {
-          appointment_id: { type: "string", nullable: true },
-          doctor_id: { type: "string", nullable: true },
           appointment_date: { type: "string", nullable: true },
           appointment_time: { type: "string", nullable: true },
           status: { type: "string", nullable: true },
           reason: { type: "string", nullable: true },
         },
         required: [
-          "appointment_id",
-          "doctor_id",
           "appointment_date",
           "appointment_time",
           "status",
@@ -85,7 +79,6 @@ export const extractSchema = {
       items: {
         type: "object",
         properties: {
-          insurance_id: { type: "string", nullable: true },
           provider_name: { type: "string", nullable: true },
           policy_number: { type: "string", nullable: true },
           policy_holder_name: { type: "string", nullable: true },
@@ -94,7 +87,6 @@ export const extractSchema = {
           status: { type: "string", nullable: true },
         },
         required: [
-          "insurance_id",
           "provider_name",
           "policy_number",
           "policy_holder_name",

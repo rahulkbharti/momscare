@@ -3,6 +3,7 @@
 import * as http from "http";
 import { Server, Socket } from "socket.io";
 import { createMedicalBot } from "./agents/medicalbot.agent";
+import { MedicalRecord } from "./models/patient.model";
 
 export function initSocket(server: http.Server) {
   const io = new Server(server, {
@@ -14,9 +15,24 @@ export function initSocket(server: http.Server) {
 
     let bot: ReturnType<typeof createMedicalBot> | null = null;
 
-    socket.on("init", (extractedData) => {
-      bot = createMedicalBot(extractedData);
-      socket.emit("ready", "Bot ready hai!");
+    socket.on("init", async (extractedData) => {
+      try {
+        let recordId = extractedData?._id;
+        if (!recordId) {
+          const record = await MedicalRecord.create(extractedData);
+          recordId = record._id;
+        }
+        bot = createMedicalBot(recordId.toString());
+        socket.emit("ready", "Bot ready hai!");
+      } catch (error) {
+        console.error("Init error:", error);
+        socket.emit(
+          "message",
+          error instanceof Error
+            ? `Failed to initialize bot: ${error.message}`
+            : "Failed to initialize bot.",
+        );
+      }
     });
 
     socket.on("message", async (message: string) => {
