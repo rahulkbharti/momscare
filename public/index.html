@@ -7,267 +7,184 @@
     <style>
       :root {
         color-scheme: light;
-        font-family:
-          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-          "Segoe UI", sans-serif;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         color: #172033;
         background: #f6f7fb;
       }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        min-height: 100vh;
-      }
-
-      button,
-      input,
-      textarea {
-        font: inherit;
-      }
-
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100vh; }
+      button, input, textarea { font: inherit; }
       button {
-        border: 0;
-        border-radius: 8px;
-        background: #2563eb;
-        color: white;
-        cursor: pointer;
-        font-weight: 650;
-        padding: 10px 14px;
+        border: 0; border-radius: 8px; background: #2563eb;
+        color: white; cursor: pointer; font-weight: 650; padding: 10px 14px;
       }
-
-      button:disabled {
-        cursor: not-allowed;
-        opacity: 0.55;
+      button:disabled { cursor: not-allowed; opacity: 0.55; }
+      input, textarea {
+        width: 100%; border: 1px solid #d4d9e6; border-radius: 8px;
+        background: white; color: #172033; padding: 10px 12px;
       }
-
-      input,
-      textarea {
-        width: 100%;
-        border: 1px solid #d4d9e6;
-        border-radius: 8px;
-        background: white;
-        color: #172033;
-        padding: 10px 12px;
-      }
-
-      textarea {
-        min-height: 168px;
-        resize: vertical;
-      }
-
+      textarea { min-height: 72px; resize: vertical; }
       .app {
         display: grid;
-        grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
-        gap: 18px;
-        min-height: 100vh;
-        padding: 18px;
+        grid-template-columns: minmax(340px, 460px) minmax(0, 1fr);
+        gap: 18px; min-height: 100vh; padding: 18px;
       }
-
-      .panel,
-      .chat {
-        border: 1px solid #e1e5ef;
-        border-radius: 8px;
-        background: white;
-      }
-
-      .panel {
-        align-self: start;
-        padding: 18px;
-      }
-
-      .brand {
-        margin: 0 0 4px;
-        font-size: 22px;
-      }
-
-      .muted {
-        margin: 0;
-        color: #65728a;
-        font-size: 14px;
-        line-height: 1.45;
-      }
-
-      .form {
-        display: grid;
-        gap: 14px;
-        margin-top: 18px;
-      }
-
-      .field {
-        display: grid;
-        gap: 7px;
-      }
-
-      .label {
-        font-size: 13px;
-        font-weight: 700;
-      }
-
-      .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      .secondary {
-        background: #e9eefb;
-        color: #1f3f85;
-      }
-
+      .panel, .chat { border: 1px solid #e1e5ef; border-radius: 8px; background: white; }
+      .panel { align-self: start; padding: 18px; }
+      .brand { margin: 0 0 4px; font-size: 22px; }
+      .muted { margin: 0; color: #65728a; font-size: 14px; line-height: 1.45; }
+      .form { display: grid; gap: 14px; margin-top: 18px; }
+      .field { display: grid; gap: 7px; }
+      .label { font-size: 13px; font-weight: 700; }
+      .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+      .secondary { background: #e9eefb; color: #1f3f85; }
+      .danger { background: #fee2e2; color: #991b1b; }
+      .success { background: #d1fae5; color: #065f46; }
       .status {
-        border-radius: 8px;
-        background: #f0f4ff;
-        color: #31508f;
-        font-size: 13px;
-        line-height: 1.45;
-        padding: 10px 12px;
+        border-radius: 8px; background: #f0f4ff; color: #31508f;
+        font-size: 13px; line-height: 1.45; padding: 10px 12px;
       }
+      .status.error { background: #fff0f0; color: #9f1d1d; }
+      .status.ok { background: #f0fdf4; color: #166534; }
 
-      .status.error {
-        background: #fff0f0;
-        color: #9f1d1d;
-      }
-
-      .json-output {
-        max-height: 260px;
-        overflow: auto;
-        border: 1px solid #e1e5ef;
-        border-radius: 8px;
-        background: #101827;
-        color: #dce8ff;
-        font-size: 12px;
-        line-height: 1.5;
-        padding: 12px;
-        white-space: pre-wrap;
-      }
-
-      .chat {
-        display: grid;
-        grid-template-rows: auto 1fr auto;
-        min-height: calc(100vh - 36px);
-        overflow: hidden;
-      }
-
-      .chat-header {
-        border-bottom: 1px solid #e1e5ef;
-        padding: 16px 18px;
-      }
-
-      .chat-header h2 {
-        margin: 0 0 3px;
-        font-size: 18px;
-      }
-
-      .messages {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        overflow: auto;
-        padding: 18px;
-      }
-
-      .message {
-        max-width: min(720px, 88%);
-        border-radius: 8px;
-        line-height: 1.45;
-        padding: 10px 12px;
-        white-space: pre-wrap;
-      }
-
-      .message.user {
-        align-self: flex-end;
-        background: #2563eb;
-        color: white;
-      }
-
-      .message.bot {
-        align-self: flex-start;
-        background: #eef2f8;
-        color: #172033;
-      }
-
-      .composer {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 10px;
-        border-top: 1px solid #e1e5ef;
+      /* ── Edit Panel ── */
+      #editPanel {
+        display: none;
+        margin-top: 16px;
+        border: 2px solid #fbbf24;
+        border-radius: 10px;
         padding: 14px;
+        background: #fffbeb;
       }
+      #editPanel h3 { margin: 0 0 10px; font-size: 15px; color: #92400e; }
+      .edit-section { margin-bottom: 14px; }
+      .edit-section h4 {
+        margin: 0 0 6px; font-size: 12px; font-weight: 700;
+        text-transform: uppercase; color: #6b7280; letter-spacing: .05em;
+      }
+      .edit-row {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;
+      }
+      .edit-row.single { grid-template-columns: 1fr; }
+      .edit-row label { font-size: 12px; color: #374151; font-weight: 600; }
+      .edit-row input { padding: 6px 10px; font-size: 13px; }
+      .medicine-item, .condition-item, .appointment-item {
+        border: 1px solid #e5e7eb; border-radius: 8px;
+        padding: 10px; margin-bottom: 8px; background: white; position: relative;
+      }
+      .remove-btn {
+        position: absolute; top: 6px; right: 6px;
+        background: #fee2e2; color: #991b1b; border: 0;
+        border-radius: 6px; padding: 2px 8px; font-size: 11px; cursor: pointer;
+      }
+      .add-btn {
+        background: #eff6ff; color: #1d4ed8; border: 1px dashed #93c5fd;
+        border-radius: 8px; padding: 6px 12px; font-size: 12px;
+        cursor: pointer; width: 100%; margin-top: 4px;
+      }
+      .edit-actions { display: flex; gap: 10px; margin-top: 12px; }
+      .edit-actions button { flex: 1; }
+
+      /* ── Chat ── */
+      .chat { display: grid; grid-template-rows: auto 1fr auto; min-height: calc(100vh - 36px); overflow: hidden; }
+      .chat-header { border-bottom: 1px solid #e1e5ef; padding: 16px 18px; }
+      .chat-header h2 { margin: 0 0 3px; font-size: 18px; }
+      .messages { display: flex; flex-direction: column; gap: 10px; overflow: auto; padding: 18px; }
+      .message { max-width: min(720px, 88%); border-radius: 8px; line-height: 1.45; padding: 10px 12px; white-space: pre-wrap; }
+      .message.user { align-self: flex-end; background: #2563eb; color: white; }
+      .message.bot { align-self: flex-start; background: #eef2f8; color: #172033; }
+      .composer { display: grid; grid-template-columns: 1fr auto; gap: 10px; border-top: 1px solid #e1e5ef; padding: 14px; }
 
       @media (max-width: 860px) {
-        .app {
-          grid-template-columns: 1fr;
-        }
-
-        .chat {
-          min-height: 620px;
-        }
+        .app { grid-template-columns: 1fr; }
+        .chat { min-height: 620px; }
+        .edit-row { grid-template-columns: 1fr; }
       }
     </style>
   </head>
   <body>
     <main class="app">
       <section class="panel">
-        <h1 class="brand">Mom Care Chat</h1>
-        <p class="muted">
-          Upload prescription files, extract JSON, then chat with the medical
-          bot over Socket.IO.
-        </p>
+        <h1 class="brand">🏥 Mom Care Chat</h1>
+        <p class="muted">Upload prescription → AI extracts → Review & edit → Chat with bot</p>
 
         <form class="form" id="extractForm">
           <div class="field">
             <label class="label" for="token">Document API token</label>
-            <input
-              id="token"
-              name="token"
-              type="password"
-              autocomplete="off"
-              placeholder="DOCUMENT_API_TOKEN"
-            />
+            <input id="token" name="token" type="password" autocomplete="off" placeholder="DOCUMENT_API_TOKEN" />
           </div>
 
           <div class="field">
             <label class="label" for="files">Prescription files</label>
-            <input id="files" name="files" type="file" multiple />
+            <input id="files" name="files" type="file" multiple accept="image/*,.pdf" />
           </div>
 
           <div class="actions">
-            <button id="extractButton" type="submit">Extract and start</button>
-            <button id="sampleButton" class="secondary" type="button">
-              Use sample data
-            </button>
+            <button id="extractButton" type="submit">⬆ Extract & Start</button>
+            <button id="sampleButton" class="secondary" type="button">Use sample data</button>
           </div>
 
           <div id="status" class="status">Socket connecting...</div>
-
-          <div class="field">
-            <label class="label" for="jsonOutput">Extracted JSON</label>
-            <pre id="jsonOutput" class="json-output">{}</pre>
-          </div>
         </form>
+
+        <!-- ── Edit Panel (shown after extraction) ── -->
+        <div id="editPanel">
+          <h3>✏️ Review & Edit Extracted Data</h3>
+          <p style="font-size:12px;color:#92400e;margin:0 0 12px">AI extraction may have errors — correct below before saving.</p>
+
+          <div class="edit-section">
+            <h4>👤 Patient</h4>
+            <div class="edit-row">
+              <div><label>Name</label><input id="e_name" placeholder="Patient name" /></div>
+              <div><label>Age</label><input id="e_age" type="number" placeholder="Age" /></div>
+            </div>
+            <div class="edit-row">
+              <div><label>Gender</label><input id="e_gender" placeholder="Male / Female / Other" /></div>
+              <div><label>Phone</label><input id="e_phone" placeholder="+91..." /></div>
+            </div>
+          </div>
+
+          <div class="edit-section">
+            <h4>👨‍⚕️ Doctor</h4>
+            <div class="edit-row single">
+              <div><label>Doctor Name</label><input id="e_doctor" placeholder="Dr. Name" /></div>
+            </div>
+          </div>
+
+          <div class="edit-section">
+            <h4>🩺 Conditions</h4>
+            <div id="conditionsList"></div>
+            <button class="add-btn" onclick="addCondition()">+ Add condition</button>
+          </div>
+
+          <div class="edit-section">
+            <h4>💊 Medicines</h4>
+            <div id="medicinesList"></div>
+            <button class="add-btn" onclick="addMedicine()">+ Add medicine</button>
+          </div>
+
+          <div class="edit-section">
+            <h4>📅 Appointments</h4>
+            <div id="appointmentsList"></div>
+            <button class="add-btn" onclick="addAppointment()">+ Add appointment</button>
+          </div>
+
+          <div class="edit-actions">
+            <button id="saveEditBtn" class="success" onclick="saveEdits()">💾 Save Changes</button>
+            <button id="skipEditBtn" class="secondary" onclick="skipEdits()">Skip & Chat</button>
+          </div>
+          <div id="editStatus" style="margin-top:8px;font-size:13px;"></div>
+        </div>
       </section>
 
       <section class="chat">
         <div class="chat-header">
-          <h2>Chat</h2>
-          <p class="muted" id="chatState">
-            Upload documents or use sample data to start chatting.
-          </p>
+          <h2>💬 Chat</h2>
+          <p class="muted" id="chatState">Upload documents or use sample data to start chatting.</p>
         </div>
-
         <div class="messages" id="messages"></div>
-
         <form class="composer" id="chatForm">
-          <input
-            id="messageInput"
-            type="text"
-            placeholder="Ask about medicines, conditions, appointments..."
-            disabled
-          />
+          <input id="messageInput" type="text" placeholder="Ask about medicines, conditions, appointments..." disabled />
           <button id="sendButton" type="submit" disabled>Send</button>
         </form>
       </section>
@@ -277,161 +194,263 @@
     <script>
       const socket = io();
 
-      const extractForm = document.getElementById("extractForm");
-      const tokenInput = document.getElementById("token");
-      const filesInput = document.getElementById("files");
+      // DOM refs
+      const extractForm  = document.getElementById("extractForm");
+      const tokenInput   = document.getElementById("token");
+      const filesInput   = document.getElementById("files");
       const extractButton = document.getElementById("extractButton");
       const sampleButton = document.getElementById("sampleButton");
-      const statusBox = document.getElementById("status");
-      const jsonOutput = document.getElementById("jsonOutput");
-      const chatState = document.getElementById("chatState");
-      const messages = document.getElementById("messages");
-      const chatForm = document.getElementById("chatForm");
+      const statusBox    = document.getElementById("status");
+      const chatState    = document.getElementById("chatState");
+      const messages     = document.getElementById("messages");
+      const chatForm     = document.getElementById("chatForm");
       const messageInput = document.getElementById("messageInput");
-      const sendButton = document.getElementById("sendButton");
+      const sendButton   = document.getElementById("sendButton");
+      const editPanel    = document.getElementById("editPanel");
+      const editStatus   = document.getElementById("editStatus");
 
+      let botReady = false;
+      let currentRecordId = null; // MongoDB _id of extracted record
+
+      // ── Sample data ───────────────────────────────────────────────────────────
       const sampleData = {
-        patient: {
-          name: "Rasia Sultana",
-          age: 35,
-          gender: "Female",
-          phone: "+91XXXXXXXXXX",
-        },
-        doctor: {
-          name: "Akhtari Hossain Chowdhury",
-        },
+        patient: { name: "Rasia Sultana", age: 35, gender: "Female", phone: "+91XXXXXXXXXX" },
+        doctor:  { name: "Akhtari Hossain Chowdhury" },
         conditions: ["Thalassaemia", "Anaemia", "Menorrhagia"],
-        prescriptions: [
-          {
-            medicine_name: "Pantoprazole",
-            dosage: "40mg",
-            frequency: 1,
-            timings: ["08:00"],
-            instructions: "Before breakfast",
-          },
-        ],
+        prescriptions: [{ medicine_name: "Pantoprazole", dosage: "40mg", frequency: 1, timings: ["08:00"], instructions: "Before breakfast" }],
         appointments: [],
         insurance: [],
       };
 
-      let botReady = false;
-
-      function setStatus(message, isError = false) {
-        statusBox.textContent = message;
-        statusBox.classList.toggle("error", isError);
+      // ── Helpers ───────────────────────────────────────────────────────────────
+      function setStatus(msg, type = "") {
+        statusBox.textContent = msg;
+        statusBox.className = "status" + (type ? " " + type : "");
       }
 
       function setChatEnabled(enabled) {
         botReady = enabled;
         messageInput.disabled = !enabled;
-        sendButton.disabled = !enabled;
+        sendButton.disabled   = !enabled;
         chatState.textContent = enabled
           ? "Bot ready. Ask anything about the extracted medical data."
           : "Upload documents or use sample data to start chatting.";
       }
 
       function appendMessage(role, text) {
-        const message = document.createElement("div");
-        message.className = `message ${role}`;
-        message.textContent = text || "";
-        messages.appendChild(message);
+        const div = document.createElement("div");
+        div.className = "message " + role;
+        div.textContent = text || "";
+        messages.appendChild(div);
         messages.scrollTop = messages.scrollHeight;
       }
 
-      function startBot(extractedData) {
-        jsonOutput.textContent = JSON.stringify(extractedData, null, 2);
-        socket.emit("init", extractedData);
+      function startBot(data) {
+        socket.emit("init", data);
       }
 
-      socket.on("connect", () => {
-        setStatus(`Socket connected: ${socket.id}`);
-      });
+      // ── Populate edit panel from extracted data ───────────────────────────────
+      function showEditPanel(data) {
+        editPanel.style.display = "block";
+        document.getElementById("e_name").value   = data.patient?.name   || "";
+        document.getElementById("e_age").value    = data.patient?.age    || "";
+        document.getElementById("e_gender").value = data.patient?.gender || "";
+        document.getElementById("e_phone").value  = data.patient?.phone  || "";
+        document.getElementById("e_doctor").value = data.doctor?.name    || "";
 
-      socket.on("ready", (message) => {
-        setChatEnabled(true);
-        setStatus(message || "Bot ready.");
-        appendMessage("bot", "Bot ready hai. Ab medical data ke baare me pucho.");
-      });
+        // Conditions
+        const cl = document.getElementById("conditionsList");
+        cl.innerHTML = "";
+        (data.conditions || []).forEach(c => addCondition(c));
 
-      socket.on("message", (message) => {
-        setChatEnabled(true);
-        appendMessage("bot", message);
-      });
+        // Medicines
+        const ml = document.getElementById("medicinesList");
+        ml.innerHTML = "";
+        (data.prescriptions || []).forEach(m => addMedicine(m));
 
-      socket.on("disconnect", () => {
-        setChatEnabled(false);
-        setStatus("Socket disconnected.", true);
-      });
+        // Appointments
+        const al = document.getElementById("appointmentsList");
+        al.innerHTML = "";
+        (data.appointments || []).forEach(a => addAppointment(a));
+      }
 
-      socket.on("connect_error", (error) => {
-        setStatus(error.message || "Socket connection failed.", true);
-      });
+      // ── Dynamic list builders ─────────────────────────────────────────────────
+      function addCondition(value = "") {
+        const div = document.createElement("div");
+        div.className = "condition-item";
+        div.innerHTML = `
+          <input placeholder="e.g. Hypertension" value="${escHtml(value)}" />
+          <button class="remove-btn" onclick="this.parentElement.remove()">✕</button>
+        `;
+        document.getElementById("conditionsList").appendChild(div);
+      }
 
-      extractForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
+      function addMedicine(m = {}) {
+        const div = document.createElement("div");
+        div.className = "medicine-item";
+        div.innerHTML = `
+          <button class="remove-btn" onclick="this.parentElement.remove()">✕</button>
+          <div class="edit-row">
+            <div><label>Medicine</label><input class="m_name" value="${escHtml(m.medicine_name)}" placeholder="Metformin" /></div>
+            <div><label>Dosage</label><input class="m_dosage" value="${escHtml(m.dosage)}" placeholder="500mg" /></div>
+          </div>
+          <div class="edit-row">
+            <div><label>Frequency (per day)</label><input class="m_freq" type="number" value="${m.frequency || ''}" placeholder="2" /></div>
+            <div><label>Timings (comma separated)</label><input class="m_timings" value="${escHtml((m.timings||[]).join(', '))}" placeholder="08:00, 21:00" /></div>
+          </div>
+          <div class="edit-row single">
+            <div><label>Instructions</label><input class="m_instr" value="${escHtml(m.instructions)}" placeholder="After meals" /></div>
+          </div>
+        `;
+        document.getElementById("medicinesList").appendChild(div);
+      }
 
+      function addAppointment(a = {}) {
+        const div = document.createElement("div");
+        div.className = "appointment-item";
+        div.innerHTML = `
+          <button class="remove-btn" onclick="this.parentElement.remove()">✕</button>
+          <div class="edit-row">
+            <div><label>Date (YYYY-MM-DD)</label><input class="a_date" value="${escHtml(a.appointment_date)}" placeholder="2026-06-15" /></div>
+            <div><label>Time (HH:mm)</label><input class="a_time" value="${escHtml(a.appointment_time)}" placeholder="10:30" /></div>
+          </div>
+          <div class="edit-row single">
+            <div><label>Reason</label><input class="a_reason" value="${escHtml(a.reason)}" placeholder="Follow-up" /></div>
+          </div>
+        `;
+        document.getElementById("appointmentsList").appendChild(div);
+      }
+
+      function escHtml(v) { return (v == null ? "" : String(v)).replace(/"/g, "&quot;"); }
+
+      // ── Collect edited data ───────────────────────────────────────────────────
+      function collectEdits() {
+        const conditions = [...document.querySelectorAll("#conditionsList .condition-item input")]
+          .map(i => i.value.trim()).filter(Boolean);
+
+        const prescriptions = [...document.querySelectorAll("#medicinesList .medicine-item")].map(item => ({
+          medicine_name: item.querySelector(".m_name")?.value.trim() || null,
+          dosage:        item.querySelector(".m_dosage")?.value.trim() || null,
+          frequency:     Number(item.querySelector(".m_freq")?.value) || null,
+          timings:       (item.querySelector(".m_timings")?.value || "").split(",").map(t => t.trim()).filter(Boolean),
+          instructions:  item.querySelector(".m_instr")?.value.trim() || null,
+        }));
+
+        const appointments = [...document.querySelectorAll("#appointmentsList .appointment-item")].map(item => ({
+          appointment_date: item.querySelector(".a_date")?.value.trim() || null,
+          appointment_time: item.querySelector(".a_time")?.value.trim() || null,
+          reason:           item.querySelector(".a_reason")?.value.trim() || null,
+          status: null,
+        }));
+
+        return {
+          patient: {
+            name:   document.getElementById("e_name").value.trim() || null,
+            age:    Number(document.getElementById("e_age").value) || null,
+            gender: document.getElementById("e_gender").value.trim() || null,
+            phone:  document.getElementById("e_phone").value.trim() || null,
+          },
+          doctor: { name: document.getElementById("e_doctor").value.trim() || null },
+          conditions,
+          prescriptions,
+          appointments,
+        };
+      }
+
+      // ── Save edits to server ──────────────────────────────────────────────────
+      async function saveEdits() {
+        const edits = collectEdits();
+        const token = tokenInput.value.trim();
+        editStatus.textContent = "Saving...";
+
+        try {
+          const res = await fetch(`/api/documents/${currentRecordId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(edits),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Save failed");
+
+          editStatus.textContent = "✅ Saved! Starting bot with corrected data...";
+          editStatus.style.color = "#065f46";
+          setTimeout(() => {
+            editPanel.style.display = "none";
+            startBot(data.record);
+          }, 800);
+        } catch (err) {
+          editStatus.textContent = "❌ " + err.message;
+          editStatus.style.color = "#991b1b";
+        }
+      }
+
+      function skipEdits() {
+        editPanel.style.display = "none";
+        setStatus("Starting bot with original extracted data...");
+        // Re-trigger bot with current extracted data
+        socket.emit("init", collectEdits());
+      }
+
+      // ── Socket events ─────────────────────────────────────────────────────────
+      socket.on("connect",       () => setStatus(`Socket connected: ${socket.id}`));
+      socket.on("ready",    (msg) => { setChatEnabled(true); setStatus(msg || "Bot ready.", "ok"); appendMessage("bot", "Bot ready! Medical data ke baare mein pucho."); });
+      socket.on("message",  (msg) => { setChatEnabled(true); appendMessage("bot", msg); });
+      socket.on("disconnect",    () => { setChatEnabled(false); setStatus("Socket disconnected.", "error"); });
+      socket.on("connect_error", (e) => setStatus(e.message || "Connection failed.", "error"));
+
+      // ── Extract form submit ───────────────────────────────────────────────────
+      extractForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
         const files = Array.from(filesInput.files || []);
         const token = tokenInput.value.trim();
 
-        if (!token) {
-          setStatus("Document API token required.", true);
-          return;
-        }
-
-        if (!files.length) {
-          setStatus("Select at least one prescription file.", true);
-          return;
-        }
+        if (!token) { setStatus("Document API token required.", "error"); return; }
+        if (!files.length) { setStatus("Select at least one prescription file.", "error"); return; }
 
         const formData = new FormData();
-        for (const file of files) {
-          formData.append("files", file);
-        }
+        for (const f of files) formData.append("files", f);
 
         extractButton.disabled = true;
         setChatEnabled(false);
-        setStatus("Extracting medical data...");
+        setStatus("⏳ Extracting medical data with Gemini AI...");
 
         try {
-          const response = await fetch("/api/documents/extract", {
+          const res = await fetch("/api/documents/extract", {
             method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
             body: formData,
           });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || "Extraction failed.");
 
-          const data = await response.json();
-
-          if (!response.ok) {
-            throw new Error(data.error || "Extraction failed.");
-          }
-
-          setStatus("Extraction complete. Starting bot...");
-          startBot(data);
-        } catch (error) {
-          setStatus(error.message || "Extraction failed.", true);
+          currentRecordId = data._id;
+          setStatus("✅ Extraction complete! Review & edit below, then save.", "ok");
+          showEditPanel(data);
+        } catch (err) {
+          setStatus(err.message || "Extraction failed.", "error");
         } finally {
           extractButton.disabled = false;
         }
       });
 
+      // ── Sample data ───────────────────────────────────────────────────────────
       sampleButton.addEventListener("click", () => {
+        currentRecordId = null;
         setChatEnabled(false);
         setStatus("Starting bot with sample data...");
         startBot(sampleData);
       });
 
-      chatForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-
-        const message = messageInput.value.trim();
-        if (!message || !botReady) {
-          return;
-        }
-
-        appendMessage("user", message);
-        socket.emit("message", message);
+      // ── Chat send ─────────────────────────────────────────────────────────────
+      chatForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const msg = messageInput.value.trim();
+        if (!msg || !botReady) return;
+        appendMessage("user", msg);
+        socket.emit("message", msg);
         messageInput.value = "";
       });
     </script>

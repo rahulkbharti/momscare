@@ -162,3 +162,56 @@ documentRoutes.get("/", async (req, res) => {
     });
   }
 });
+
+// ── PUT /api/documents/:id ────────────────────────────────────────────────────
+// Edit/correct AI-extracted data. Re-syncs to Coral JSONL after save.
+documentRoutes.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+
+    if (!updates || typeof updates !== "object") {
+      res.status(400).json({ error: "Request body with updated fields is required." });
+      return;
+    }
+
+    // Only allow updating known fields (whitelist)
+    const allowedFields = ["patient", "doctor", "conditions", "prescriptions", "appointments", "insurance"];
+    const sanitized: Record<string, unknown> = {};
+    for (const key of allowedFields) {
+      if (key in updates) sanitized[key] = updates[key];
+    }
+
+    if (!Object.keys(sanitized).length) {
+      res.status(400).json({ error: "No valid fields to update." });
+      return;
+    }
+
+    const updated = await MedicalRecord.findByIdAndUpdate(
+      id,
+      { $set: sanitized },
+      { new: true, runValidators: true }
+    );
+
+    if (!updated) {
+      res.status(404).json({ error: "Medical record not found." });
+      return;
+    }
+
+    // Re-sync the updated record to Coral JSONL files
+    try {
+      writeToCoralJsonl(id, updated.toObject());
+    } catch (coralErr) {
+      console.error("[Coral] Failed to re-sync JSONL after edit:", coralErr);
+    }
+
+    res.status(200).json({
+      message: "Record updated successfully.",
+      record: updated,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: error instanceof Error ? error.message : "Update failed.",
+    });
+  }
+});
