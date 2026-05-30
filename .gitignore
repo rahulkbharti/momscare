@@ -37,3 +37,4 @@ logs/
 # Temp files
 *.tmp
 *.temp
+q*.json

@@ -1,5 +1,7 @@
 # 🏥 Mom-Care — AI-Powered Medical Assistant
 
+> 📐 **Architecture Diagrams**: [How Coral + Gemini work together](./docs/coral-gemini-architecture.md)
+
 <div align="center">
 
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-brightgreen)](https://nodejs.org)
@@ -112,8 +114,8 @@ coral --version
 
 ### 1. Clone & install
 ```bash
-git clone https://github.com/rahulkbharti/mom-care-api.git
-cd mom-care-api
+git clone https://github.com/rahulkbharti/momscare.git
+cd momscare
 npm install
 ```
 
@@ -134,33 +136,19 @@ GEMINI_API_KEY=your_gemini_api_key
 GEMINI_MODEL=gemini-2.0-flash
 DOCUMENT_API_TOKEN=any-secret-token
 MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/momcare
-
-# IMPORTANT: Absolute path to this project's data/ folder
-# Windows:  CORAL_DATA_PATH=C:\Users\YourName\projects\mom-care-api\data
-# Mac/Linux: CORAL_DATA_PATH=/home/yourname/projects/mom-care-api/data
-CORAL_DATA_PATH=/absolute/path/to/mom-care-api/data
 ```
 
-### 4. Update Coral manifest paths
-
-Each manifest in `coral/sources/*/manifest.yaml` has a hardcoded `location` field.
-Update it to point to **your** data directory:
-
-**Linux/Mac:**
+### 4. Run setup script ⭐
 ```bash
-# Replace the old path with your path in all manifests
-find coral/sources -name "manifest.yaml" | xargs sed -i \
-  's|file:///D:/hackathons/mom5/mom-care/data/|file:///YOUR/ABSOLUTE/PATH/data/|g'
+npm run setup
 ```
 
-**Windows PowerShell:**
-```powershell
-$newPath = "file:///C:/Users/YourName/projects/mom-care-api/data/"
-Get-ChildItem "coral\sources\*\manifest.yaml" | ForEach-Object {
-    (Get-Content $_ -Raw) -replace 'file:///D:/hackathons/mom5/mom-care/data/', $newPath |
-    Set-Content $_
-}
-```
+This automatically:
+- **Downloads & installs Coral CLI** if not already installed (Windows ZIP / Mac-Linux install.sh)
+- Creates `data/` directory
+- Updates all 5 Coral manifest paths for **your** machine
+- Updates `CORAL_DATA_PATH` in your `.env`
+- Detects & saves Coral CLI path
 
 ### 5. Start
 ```bash
@@ -183,6 +171,7 @@ Server is running on port 8000
 ```
 http://localhost:8000
 ```
+
 
 ---
 
